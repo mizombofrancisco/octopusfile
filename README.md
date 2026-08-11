@@ -62,4 +62,5 @@ OctopusFile.watch("C:/arquivos")
 4. Utilize a classe principal `OctopusFile` através da fachada para começar a gerir os seus ficheiros.
 
 ---
-*Desenvolvido sob o ecossistema ACURATECH.*
+*Author: Francisco D. C. Mizombo.*
+*Desenvolvido sob o ecossistema Wonetino Group.*
