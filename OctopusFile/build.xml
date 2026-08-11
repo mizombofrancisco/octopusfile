@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    ============================================================
+    OCTOPUSFILE - BUILD MULTIPLATAFORMA
+    ============================================================
+
+    Windows / Linux / macOS
+
+    Versão:
+        1.YYYYMMDD.HHMMSS
+
+    Exemplo:
+        1.20260810.164530
+
+    Resultado no projeto:
+
+        OctopusFile/
+        └── dist/
+            └── OctopusFile_1.20260810.164530.jar
+
+    Arquivo permanente:
+
+        Windows:
+        C:\Users\UTILIZADOR\Documents\OctopusFileVersion\
+
+        Linux:
+        /home/utilizador/Documents/OctopusFileVersion/
+
+        macOS:
+        /Users/utilizador/Documents/OctopusFileVersion/
+
+    IMPORTANTE:
+
+        O build-impl.xml do NetBeans NÃO é alterado.
+
+        O NetBeans cria internamente:
+
+            dist/OctopusFile.jar
+
+        O -post-jar cria:
+
+            dist/OctopusFile_versao.jar
+
+        e copia o mesmo arquivo para:
+
+            Documents/OctopusFileVersion/
+-->
+
+
+<project name="OctopusFile"
+         default="default"
+         basedir=".">
+
+
+    <!-- ========================================================
+         BUILD ORIGINAL DO NETBEANS
+         ======================================================== -->
+
+    <import file="nbproject/build-impl.xml"/>
+
+
+    <!-- ========================================================
+         CONFIGURAÇÃO PRINCIPAL
+         ======================================================== -->
+
+    <property
+        name="octopus.version.major"
+        value="1"/>
+
+
+    <!-- ========================================================
+         DATA
+         ======================================================== -->
+
+    <tstamp>
+
+        <format
+            property="octopus.date"
+            pattern="yyyyMMdd"/>
+
+    </tstamp>
+
+
+    <!-- ========================================================
+         HORA
+         ======================================================== -->
+
+    <tstamp>
+
+        <format
+            property="octopus.time"
+            pattern="HHmmss"/>
+
+    </tstamp>
+
+
+    <!-- ========================================================
+         VERSÃO COMPLETA
+         ========================================================
+
+         Exemplo:
+
+         1.20260810.164530
+    -->
+
+    <property
+        name="octopus.version"
+        value="${octopus.version.major}.${octopus.date}.${octopus.time}"/>
+
+
+    <!-- ========================================================
+         NOME DO JAR VERSIONADO
+         ======================================================== -->
+
+    <property
+        name="octopus.jar.name"
+        value="OctopusFile_${octopus.version}.jar"/>
+
+
+    <!-- ========================================================
+         DIRETÓRIO DIST
+         ========================================================
+
+         Sempre relativo à raiz do projeto.
+
+         Exemplo:
+
+         C:\Users\DELL\Documents\NetBeansProjects\OctopusFile\dist
+    -->
+
+    <property
+        name="octopus.dist.dir"
+        location="${basedir}/dist"/>
+
+
+    <!-- ========================================================
+         JAR PADRÃO DO NETBEANS
+         ========================================================
+
+         Este arquivo é criado pelo NetBeans.
+
+         Não vamos apagá-lo porque o NetBeans pode precisar
+         dele durante o processo de Build.
+    -->
+
+    <property
+        name="octopus.default.jar"
+        location="${octopus.dist.dir}/OctopusFile.jar"/>
+
+
+    <!-- ========================================================
+         JAR VERSIONADO
+         ======================================================== -->
+
+    <property
+        name="octopus.versioned.jar"
+        location="${octopus.dist.dir}/${octopus.jar.name}"/>
+
+
+    <!-- ========================================================
+         DIRETÓRIO DOCUMENTOS
+         ========================================================
+
+         ${user.home} funciona em:
+
+         Windows
+         Linux
+         macOS
+    -->
+
+    <property
+        name="octopus.documents.dir"
+        location="${user.home}/Documents"/>
+
+
+    <!-- ========================================================
+         DIRETÓRIO DE TODAS AS VERSÕES
+         ======================================================== -->
+
+    <property
+        name="octopus.archive.dir"
+        location="${octopus.documents.dir}/OctopusFileVersion"/>
+
+
+    <!-- ========================================================
+         INFORMAÇÕES
+         ======================================================== -->
+
+    <target name="-octopus-info">
+
+        <echo message=""/>
+        <echo message="================================================"/>
+        <echo message=" OCTOPUSFILE - BUILD"/>
+        <echo message="================================================"/>
+
+        <echo message="Sistema: ${os.name}"/>
+        <echo message="Arquitetura: ${os.arch}"/>
+        <echo message="Java: ${java.version}"/>
+
+        <echo message=""/>
+
+        <echo message="Versão: ${octopus.version}"/>
+
+        <echo message=""/>
+
+        <echo message="JAR versionado:"/>
+        <echo message="${octopus.versioned.jar}"/>
+
+        <echo message=""/>
+
+        <echo message="Diretório de versões:"/>
+        <echo message="${octopus.archive.dir}"/>
+
+        <echo message="================================================"/>
+        <echo message=""/>
+
+    </target>
+
+
+    <!-- ========================================================
+         PREPARAÇÃO
+         ======================================================== -->
+
+    <target name="-octopus-prepare">
+
+        <!-- Criar dist -->
+
+        <mkdir
+            dir="${octopus.dist.dir}"/>
+
+
+        <!-- Criar Documents/OctopusFileVersion -->
+
+        <mkdir
+            dir="${octopus.archive.dir}"/>
+
+    </target>
+
+
+    <!-- ========================================================
+         APÓS O JAR DO NETBEANS
+         ========================================================
+
+         ESTE É O PONTO MAIS IMPORTANTE.
+
+         Quando você clicar em:
+
+             Clean and Build Project
+
+         ou:
+
+             Build Project
+
+         o NetBeans executará o processo normal.
+
+         Depois do JAR ser criado, o NetBeans executará:
+
+             -post-jar
+
+         Aqui fazemos o versionamento.
+    -->
+
+    <target name="-post-jar"
+            depends="-octopus-prepare,-octopus-info">
+
+        <echo message=""/>
+        <echo message="================================================"/>
+        <echo message=" OCTOPUSFILE - VERSIONAMENTO"/>
+        <echo message="================================================"/>
+
+
+        <!-- ====================================================
+             VERIFICAR JAR PADRÃO
+             ==================================================== -->
+
+        <available
+            file="${octopus.default.jar}"
+            property="octopus.default.jar.exists"/>
+
+
+        <echo message=""/>
+        <echo message="JAR original do NetBeans:"/>
+        <echo message="${octopus.default.jar}"/>
+
+
+        <!-- ====================================================
+             CRIAR JAR VERSIONADO
+             ==================================================== -->
+
+        <copy
+            file="${octopus.default.jar}"
+            tofile="${octopus.versioned.jar}"
+            overwrite="true"/>
+
+
+        <echo message=""/>
+        <echo message="JAR VERSIONADO:"/>
+        <echo message="${octopus.versioned.jar}"/>
+
+
+        <!-- ====================================================
+             COPIAR PARA DOCUMENTOS
+             ====================================================
+
+             O nome será exatamente igual ao JAR do dist.
+
+             Exemplo:
+
+             dist/
+             OctopusFile_1.20260810.164530.jar
+
+             Documents/OctopusFileVersion/
+             OctopusFile_1.20260810.164530.jar
+        -->
+
+        <copy
+            file="${octopus.versioned.jar}"
+            tofile="${octopus.archive.dir}/${octopus.jar.name}"
+            overwrite="true"/>
+
+
+        <!-- ====================================================
+             RESULTADO
+             ==================================================== -->
+
+        <echo message=""/>
+        <echo message="================================================"/>
+        <echo message=" VERSÃO ARQUIVADA COM SUCESSO"/>
+        <echo message="================================================"/>
+
+        <echo message=""/>
+        <echo message="Versão:"/>
+        <echo message="${octopus.version}"/>
+
+        <echo message=""/>
+
+        <echo message="JAR no DIST:"/>
+        <echo message="${octopus.versioned.jar}"/>
+
+        <echo message=""/>
+
+        <echo message="JAR nos DOCUMENTOS:"/>
+        <echo message="${octopus.archive.dir}/${octopus.jar.name}"/>
+
+        <echo message=""/>
+        <echo message="================================================"/>
+        <echo message=""/>
+
+    </target>
+
+
+</project>
